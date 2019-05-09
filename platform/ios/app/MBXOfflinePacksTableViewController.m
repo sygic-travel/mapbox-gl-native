@@ -102,7 +102,10 @@ static NSString * const MBXOfflinePacksTableViewActiveCellReuseIdentifier = @"Ac
             name = nameField.placeholder;
         }
 
-        MGLTilePyramidOfflineRegion *region = [[MGLTilePyramidOfflineRegion alloc] initWithStyleURL:mapView.styleURL bounds:mapView.visibleCoordinateBounds fromZoomLevel:mapView.zoomLevel toZoomLevel:mapView.maximumZoomLevel];
+        double currentZoom = mapView.zoomLevel;
+        double maxZoom = mapView.maximumZoomLevel;
+
+        MGLTilePyramidOfflineRegion *region = [[MGLTilePyramidOfflineRegion alloc] initWithStyleURL:mapView.styleURL bounds:mapView.visibleCoordinateBounds fromZoomLevel:currentZoom toZoomLevel:maxZoom];
         id ideographicFontFamilyName = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"MGLIdeographicFontFamilyName"];
         if([ideographicFontFamilyName isKindOfClass:[NSNumber class]] && ![ideographicFontFamilyName boolValue]){
             region.includesIdeographicGlyphs = YES;

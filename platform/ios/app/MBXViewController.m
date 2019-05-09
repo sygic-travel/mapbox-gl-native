@@ -1945,7 +1945,13 @@ CLLocationCoordinate2D randomWorldCoordinate() {
 
     self.styleIndex = (self.styleIndex + 1) % styleNames.count;
 
-    self.mapView.styleURL = styleURLs[self.styleIndex];
+//    self.mapView.styleURL = styleURLs[self.styleIndex];
+//	self.mapView.styleURL = [NSURL URLWithString:@"https://docs.mapbox.com/ios/files/third_party_vector_style.json"];
+//	self.mapView.styleURL = [NSURL URLWithString:@"https://sygic-travel-dist.s3.amazonaws.com/ios/shared/style.json"];
+//	self.mapView.styleURL = [NSURL URLWithString:@"https://maps.tilehosting.com/styles/basic/style.json?key=6rA76Z6Z3lpZU8b3zTEs"];
+//	self.mapView.styleURL = [[NSBundle mainBundle] URLForResource:@"map_style" withExtension:@"json"];
+	self.mapView.styleURL = [[NSBundle mainBundle] URLForResource:@"map_style_dark" withExtension:@"json"];
+//	self.mapView.styleURL = [NSURL URLWithString:@"https://sygic-travel-dist.s3.amazonaws.com/data/mapbox/map_style_online.json"];
 
     UIButton *titleButton = (UIButton *)self.navigationItem.titleView;
     [titleButton setTitle:styleNames[self.styleIndex] forState:UIControlStateNormal];
