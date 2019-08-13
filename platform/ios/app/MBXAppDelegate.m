@@ -31,7 +31,7 @@
     [MGLLoggingConfiguration sharedConfiguration].loggingLevel = MGLLoggingLevelFault;
 #endif
 
-    [MGLMetricsManager sharedManager].delegate = self;
+//    [MGLMetricsManager sharedManager].delegate = self;
     return YES;
 }
 

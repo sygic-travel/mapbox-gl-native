@@ -526,7 +526,7 @@
 		CAE7AD5520F46EF5003B6782 /* MGLMapSnapshotterSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAE7AD5420F46EF5003B6782 /* MGLMapSnapshotterSwiftTests.swift */; };
 		CF75A91522D85E860058A5C4 /* MGLLoggingConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75A91422D85E860058A5C4 /* MGLLoggingConfiguration.mm */; };
 		CF75A91622D85E860058A5C4 /* MGLLoggingConfiguration.mm in Sources */ = {isa = PBXBuildFile; fileRef = CF75A91422D85E860058A5C4 /* MGLLoggingConfiguration.mm */; };
-		D66EC91822E87F5000F7669A /* map_style.json in Resources */ = {isa = PBXBuildFile; fileRef = D66EC91722E87F5000F7669A /* map_style.json */; };
+		D66EC91822E87F5000F7669A /* map_style_light.json in Resources */ = {isa = PBXBuildFile; fileRef = D66EC91722E87F5000F7669A /* map_style_light.json */; };
 		D66EC91A22E8853200F7669A /* map_style_dark.json in Resources */ = {isa = PBXBuildFile; fileRef = D66EC91922E8853100F7669A /* map_style_dark.json */; };
 		DA00FC8E1D5EEB0D009AABC8 /* MGLAttributionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = DA00FC8C1D5EEB0D009AABC8 /* MGLAttributionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		DA00FC8F1D5EEB0D009AABC8 /* MGLAttributionInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = DA00FC8C1D5EEB0D009AABC8 /* MGLAttributionInfo.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1213,7 +1213,7 @@
 		CAE7AD5320F46EF5003B6782 /* integration-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "integration-Bridging-Header.h"; sourceTree = "<group>"; };
 		CAE7AD5420F46EF5003B6782 /* MGLMapSnapshotterSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MGLMapSnapshotterSwiftTests.swift; sourceTree = "<group>"; };
 		CF75A91422D85E860058A5C4 /* MGLLoggingConfiguration.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MGLLoggingConfiguration.mm; sourceTree = "<group>"; };
-		D66EC91722E87F5000F7669A /* map_style.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = map_style.json; sourceTree = "<group>"; };
+		D66EC91722E87F5000F7669A /* map_style_light.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = map_style_light.json; sourceTree = "<group>"; };
 		D66EC91922E8853100F7669A /* map_style_dark.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = map_style_dark.json; sourceTree = "<group>"; };
 		DA00FC8C1D5EEB0D009AABC8 /* MGLAttributionInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MGLAttributionInfo.h; sourceTree = "<group>"; };
 		DA00FC8D1D5EEB0D009AABC8 /* MGLAttributionInfo.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = MGLAttributionInfo.mm; sourceTree = "<group>"; };
@@ -1997,7 +1997,7 @@
 				632281DE1E6F855900D75A5D /* MBXEmbeddedMapViewController.m */,
 				6FA9341621EF372100AA9CA8 /* MBXOrnamentsViewController.h */,
 				6FA9341521EF372100AA9CA8 /* MBXOrnamentsViewController.m */,
-				D66EC91722E87F5000F7669A /* map_style.json */,
+				D66EC91722E87F5000F7669A /* map_style_light.json */,
 				D66EC91922E8853100F7669A /* map_style_dark.json */,
 				DA821D051CCC6D59007508D4 /* Main.storyboard */,
 				DA821D041CCC6D59007508D4 /* LaunchScreen.storyboard */,
@@ -3090,7 +3090,7 @@
 				A4F3FB1D2254865900A30170 /* missing_icon.json in Resources */,
 				DA1DC9701CB6C6CE006E619F /* points.geojson in Resources */,
 				353BAEF61D646370009A8DA9 /* amsterdam.geojson in Resources */,
-				D66EC91822E87F5000F7669A /* map_style.json in Resources */,
+				D66EC91822E87F5000F7669A /* map_style_light.json in Resources */,
 				DA1DC9711CB6C6CE006E619F /* polyline.geojson in Resources */,
 				DD4823761D94AE6C00EB71B7 /* line_filter_style.json in Resources */,
 				076171C72141A91700668A35 /* Settings.bundle in Resources */,

@@ -1922,6 +1922,20 @@ CLLocationCoordinate2D randomWorldCoordinate() {
             [MGLStyle satelliteStyleURL],
             [MGLStyle satelliteStreetsStyleURL]
         ];
+//////////////// Travel
+        styleNames = @[
+            @"Travel Light",
+            @"Travel Dark",
+            @"Mapbox 3rd-party",
+            @"Tilehosting basic",
+        ];
+        styleURLs = @[
+            [[NSBundle mainBundle] URLForResource:@"map_style_light" withExtension:@"json"],
+            [[NSBundle mainBundle] URLForResource:@"map_style_dark" withExtension:@"json"],
+            [NSURL URLWithString:@"https://docs.mapbox.com/ios/files/third_party_vector_style.json"],
+            [NSURL URLWithString:@"https://maps.tilehosting.com/styles/basic/style.json?key=6rA76Z6Z3lpZU8b3zTEs"],
+        ];
+////////////////
         NSAssert(styleNames.count == styleURLs.count, @"Style names and URLs don’t match.");
 
         // Make sure defaultStyleURLs is up-to-date.
@@ -1938,20 +1952,13 @@ CLLocationCoordinate2D randomWorldCoordinate() {
                 }
             }
         }
-        NSAssert(numStyleURLMethods == styleNames.count,
-                 @"MGLStyle provides %u default styles but iosapp only knows about %lu of them.",
-                 numStyleURLMethods, (unsigned long)styleNames.count);
+//        NSAssert(numStyleURLMethods == styleNames.count,
+//                 @"MGLStyle provides %u default styles but iosapp only knows about %lu of them.",
+//                 numStyleURLMethods, (unsigned long)styleNames.count);
     });
 
     self.styleIndex = (self.styleIndex + 1) % styleNames.count;
-
-//    self.mapView.styleURL = styleURLs[self.styleIndex];
-//	self.mapView.styleURL = [NSURL URLWithString:@"https://docs.mapbox.com/ios/files/third_party_vector_style.json"];
-//	self.mapView.styleURL = [NSURL URLWithString:@"https://sygic-travel-dist.s3.amazonaws.com/ios/shared/style.json"];
-//	self.mapView.styleURL = [NSURL URLWithString:@"https://maps.tilehosting.com/styles/basic/style.json?key=6rA76Z6Z3lpZU8b3zTEs"];
-//	self.mapView.styleURL = [[NSBundle mainBundle] URLForResource:@"map_style" withExtension:@"json"];
-	self.mapView.styleURL = [[NSBundle mainBundle] URLForResource:@"map_style_dark" withExtension:@"json"];
-//	self.mapView.styleURL = [NSURL URLWithString:@"https://sygic-travel-dist.s3.amazonaws.com/data/mapbox/map_style_online.json"];
+    self.mapView.styleURL = styleURLs[self.styleIndex];
 
     UIButton *titleButton = (UIButton *)self.navigationItem.titleView;
     [titleButton setTitle:styleNames[self.styleIndex] forState:UIControlStateNormal];
