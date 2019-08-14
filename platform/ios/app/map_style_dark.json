@@ -40,8 +40,8 @@
             "tiles": ["https://maps.api.sygic.com/vbgtile/89A1SdRjWhgRGWJ8XgBsEBWU1/{z}/{x}/{y}"]
         }
     },
-    "glyphs": "http://sygic-travel-dist.s3.amazonaws.com/data/mapbox/fonts/{fontstack}/{range}.pbf",
-    "sprite": "https://maps.api.sygic.com/vectorstyles/ImposmSygicTravel/spritesheet",
+    "glyphs": "https://sygic-travel-dist.s3.amazonaws.com/data/mapbox/fonts/{fontstack}/{range}.pbf",
+    "sprite": "https://sygic-travel-dist.s3.amazonaws.com/data/mapbox/sprites/spritesheet",
     "layers": [
         {
             "id": "background",
