@@ -2159,7 +2159,7 @@ public:
     {
         CGFloat distance = [quickZoom locationInView:quickZoom.view].y - self.quickZoomStart;
 
-        CGFloat newZoom = MAX(log2f(self.scale) + (distance / 75), *self.mbglMap.getBounds().minZoom);
+        CGFloat newZoom = MAX(log2f(self.scale) + (-distance / 32), *self.mbglMap.getBounds().minZoom);
 
         if ([self zoomLevel] == newZoom) return;
 
