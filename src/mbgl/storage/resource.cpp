@@ -64,7 +64,7 @@ Resource Resource::spriteImage(const std::string& base, float pixelRatio) {
     util::URL url(base);
     return Resource{ Resource::Kind::SpriteImage,
                      base.substr(0, url.path.first + url.path.second) +
-                         (pixelRatio > 1 ? "@2x" : "") + ".png" +
+                         (pixelRatio == 3 ? "@3x" : pixelRatio > 1 ? "@2x" : "") + ".png" +
                          base.substr(url.query.first, url.query.second)};
 }
 
@@ -72,7 +72,7 @@ Resource Resource::spriteJSON(const std::string& base, float pixelRatio) {
     util::URL url(base);
     return Resource{ Resource::Kind::SpriteJSON,
                      base.substr(0, url.path.first + url.path.second) +
-                         (pixelRatio > 1 ? "@2x" : "") + ".json" +
+                         (pixelRatio == 3 ? "@3x" : pixelRatio > 1 ? "@2x" : "") + ".json" +
                          base.substr(url.query.first, url.query.second)};
 }
 
