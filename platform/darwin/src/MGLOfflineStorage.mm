@@ -69,6 +69,11 @@ const MGLExceptionName MGLUnsupportedRegionTypeException = @"MGLUnsupportedRegio
     return sharedOfflineStorage;
 }
 
+- (void)setOnlineStatus:(BOOL)onlineStatus
+{
+    _mbglFileSource->setOnlineStatus(onlineStatus);
+}
+
 #if TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
 - (void)pauseFileSource:(__unused NSNotification *)notification {
     if (self.isPaused) {

@@ -240,6 +240,16 @@ MGL_EXPORT
  */
 @property(nonatomic, weak, nullable) IBOutlet id<MGLOfflineStorageDelegate> delegate;
 
+#pragma mark - Managing Online status
+
+/**
+ Used to set Online status of the Offline storage. Setting to `NO` might prevent
+ tile requests from happenning when not needed.
+
+ @param onlineStatus Desired Online status.
+ */
+- (void)setOnlineStatus:(BOOL)onlineStatus;
+
 #pragma mark - Managing Offline Packs
 
 /**
