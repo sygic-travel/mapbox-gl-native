@@ -2,17 +2,34 @@
 
 Mapbox welcomes participation and contributions from everyone. Please read [CONTRIBUTING.md](../../CONTRIBUTING.md) to get started.
 
-## 5.4.0
+## master
+
+### Performance improvements
+
+ * Improved rendering performance for the styles with multiple sources ([#15756](https://github.com/mapbox/mapbox-gl-native/pull/15756))
+
+## 5.5.0
+
+### Other changes
+
+* Added `-[MGLMapSnapshotOverlay coordinateForPoint:]` and `-[MGLMapSnapshotOverlay pointForCoordinate:]` to convert between context and map coordinates, mirroring those of `MGLMapSnapshot`. ([#15746](https://github.com/mapbox/mapbox-gl-native/pull/15746))
+* Suppress network requests for expired tiles update, if these tiles are invisible. ([#15741](https://github.com/mapbox/mapbox-gl-native/pull/15741))
+* Fixed an issue that cause the ornaments to ignore `MGLMapView.contentInset` property. ([#15584](https://github.com/mapbox/mapbox-gl-native/pull/15584))
+* Fixed an issue that cause `-[MGLMapView setCamere:withDuration:animationTimingFunction:edgePadding:completionHandler:]` persist the value of `edgePadding`. ([#15584](https://github.com/mapbox/mapbox-gl-native/pull/15584))
+* Added `MGLMapView.automaticallyAdjustsContentInset` property that indicates if wether the map view should automatically adjust its content insets. ([#15584](https://github.com/mapbox/mapbox-gl-native/pull/15584))
+* Fixed an issue that caused `MGLScaleBar` to have an incorrect size when resizing or rotating. ([#15703](https://github.com/mapbox/mapbox-gl-native/pull/15703))
+
+## 5.4.0 - September 25, 2019
 
 ### Styles and rendering
 
+* Added an `-[MGLMapSnapshotter startWithOverlayHandler:completionHandler:]` method to provide the snapshot's current `CGContext` in order to perform custom drawing on `MGLMapSnapshot` objects. ([#15530](https://github.com/mapbox/mapbox-gl-native/pull/15530))
+* Fixed an issue that caused `MGLTileSourceOptionMaximumZoomLevel` to be ignored when setting `MGLTileSource.configurationURL`. ([#15581](https://github.com/mapbox/mapbox-gl-native/pull/15581))
+* Fixed an assertion hit caused by possibility of adding a layer to an incompatible source. ([#15644](https://github.com/mapbox/mapbox-gl-native/pull/15644))
 * Fixed crashes triggered when `MGLSource` and `MGLStyleLayer` objects are accessed after having been invalidated after a style change. ([#15539](https://github.com/mapbox/mapbox-gl-native/pull/15539))
-* Fixed a rendering issue of `collisionBox` when `MGLSymbolStyleLayer.textTranslate` or `MGLSymbolStyleLayer.iconTranslate` is enabled. ([#15467](https://github.com/mapbox/mapbox-gl-native/pull/15467))
-* Fixed an issue where the scale bar text would become illegible if iOS 13 dark mode was enabled. ([#15524](https://github.com/mapbox/mapbox-gl-native/pull/15524))
+* Fixed an issue where the collision boxes for symbols would not be updated when `MGLSymbolStyleLayer.textTranslation` or `MGLSymbolStyleLayer.iconTranslation` were used. ([#15467](https://github.com/mapbox/mapbox-gl-native/pull/15467))
 * Enabled use of `MGLSymbolStyleLayer.textOffset` option together with `MGLSymbolStyleLayer.textVariableAnchor` (if `MGLSymbolStyleLayer.textRadialOffset` option is not provided). ([#15542](https://github.com/mapbox/mapbox-gl-native/pull/15542))
-* Fixed an issue with the appearance of the compass text in iOS 13. ([#15547](https://github.com/mapbox/mapbox-gl-native/pull/15547))
-* Fixed a bug where the completion block passed to `-[MGLMapView flyToCamera:completionHandler:` (and related methods) wouldn't be called. ([#15473](https://github.com/mapbox/mapbox-gl-native/pull/15473))
-* Fixed an issue of integer overflow when converting `tileCoordinates` to `LatLon`, which caused issues such as `queryRenderedFeatures` and `querySourceFeatures` returning incorrect coordinates at zoom levels 20 and higher. ([#15560](https://github.com/mapbox/mapbox-gl-native/pull/15560))
+* Fixed an issue that caused constant repainting for sources with invisible layers. ([#15600](https://github.com/mapbox/mapbox-gl-native/pull/15600))
 
 ### User interaction
 
@@ -22,13 +39,29 @@ Mapbox welcomes participation and contributions from everyone. Please read [CONT
 ### Performance improvements
  
 * Improved offline region download performance by batching certain database activities. ([#15521](https://github.com/mapbox/mapbox-gl-native/pull/15521))
+* Newly loaded labels appear faster on the screen. ([#15308](https://github.com/mapbox/mapbox-gl-native/pull/15308))
 
 ### Other changes
 
+* Fixed a bug where the completion block passed to `-[MGLMapView flyToCamera:completionHandler:]` (and related methods) wouldn't be called. ([#15473](https://github.com/mapbox/mapbox-gl-native/pull/15473))
+* Fixed a crash when offline pack invalidation happened on different threads. ([#15582](https://github.com/mapbox/mapbox-gl-native/pull/15582))
 * Fixed a potential integer overflow at high zoom levels. ([#15560](https://github.com/mapbox/mapbox-gl-native/pull/15560))
 * Fixed a bug with annotation view positions after camera transitions. ([#15122](https://github.com/mapbox/mapbox-gl-native/pull/15122/))
-* Fixed a bug where the completion block passed to `-[MGLMapView flyToCamera:completionHandler:]` (and related methods) wouldn't be called. ([#15473](https://github.com/mapbox/mapbox-gl-native/pull/15473))
-* Fixed constant repainting for the sources with invisible layers, caused by `RenderSource::hasFadingTiles()` returning `true` all the time. ([#15600](https://github.com/mapbox/mapbox-gl-native/pull/15600))
+
+## 5.3.2 - September 18, 2019
+
+* Fixed an issue where `-[MGLMapView visibleFeaturesInRect:]` and `-[MGLShapeSource featuresMatchingPredicate:]` could return incorrect coordinates at zoom levels 20 and higher. ([#15560](https://github.com/mapbox/mapbox-gl-native/pull/15560))
+
+## 5.3.1 - September 18, 2019
+
+### Styles and rendering
+
+* Fixed an issue where connecting coincident holes in a polygon could lead to a race condition. ([#15660](https://github.com/mapbox/mapbox-gl-native/pull/15660))
+
+### Other changes
+
+* Fixed an issue where the scale bar text would become illegible if iOS 13 dark mode was enabled. ([#15524](https://github.com/mapbox/mapbox-gl-native/pull/15524))
+* Fixed an issue with the appearance of the compass text in iOS 13. ([#15547](https://github.com/mapbox/mapbox-gl-native/pull/15547))
 
 ## 5.3.0 - August 28, 2019
 

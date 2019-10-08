@@ -26,7 +26,7 @@ SymbolBucket::SymbolBucket(Immutable<style::SymbolLayoutProperties::PossiblyEval
                            bool allowVerticalPlacement_,
                            std::vector<style::TextWritingModeType> placementModes_)
     : layout(std::move(layout_)),
-      bucketLeaderID(std::move(bucketName_)),
+      bucketLeaderID(bucketName_),
       iconsNeedLinear(iconsNeedLinear_ || iconSize.isDataDriven() || !iconSize.isZoomConstant()),
       sortFeaturesByY(sortFeaturesByY_),
       staticUploaded(false),
@@ -35,14 +35,13 @@ SymbolBucket::SymbolBucket(Immutable<style::SymbolLayoutProperties::PossiblyEval
       sortUploaded(false),
       justReloaded(false),
       hasVariablePlacement(false),
-      symbolInstances(std::move(symbolInstances_)),
+      symbolInstances(symbolInstances_),
       textSizeBinder(SymbolSizeBinder::create(zoom, textSize, TextSize::defaultValue())),
       iconSizeBinder(SymbolSizeBinder::create(zoom, iconSize, IconSize::defaultValue())),
       tilePixelRatio(tilePixelRatio_),
       bucketInstanceId(++maxBucketInstanceId),
       allowVerticalPlacement(allowVerticalPlacement_),
       placementModes(std::move(placementModes_)) {
-
     for (const auto& pair : paintProperties_) {
         const auto& evaluated = getEvaluated<SymbolLayerProperties>(pair.second);
         paintProperties.emplace(
@@ -232,14 +231,14 @@ void SymbolBucket::sortFeatures(const float angle) {
     icon.triangles.clear();
     sdfIcon.triangles.clear();
 
-    featureSortOrder = std::make_unique<std::vector<size_t>>();
-    featureSortOrder->reserve(symbolInstances.size());
+    auto symbolsSortOrder = std::make_unique<std::vector<size_t>>();
+    symbolsSortOrder->reserve(symbolInstances.size());
 
     // If the symbols are allowed to overlap sort them by their vertical screen position.
     // The index array buffer is rewritten to reference the (unchanged) vertices in the
     // sorted order.
     for (const SymbolInstance& symbolInstance : getSortedSymbols(angle)) {
-        featureSortOrder->push_back(symbolInstance.dataFeatureIndex);
+        symbolsSortOrder->push_back(symbolInstance.dataFeatureIndex);
 
         if (symbolInstance.placedRightTextIndex) {
             addPlacedSymbol(text.triangles, text.placedSymbols[*symbolInstance.placedRightTextIndex]);
@@ -266,6 +265,8 @@ void SymbolBucket::sortFeatures(const float angle) {
             addPlacedSymbol(iconBuffer.triangles, iconBuffer.placedSymbols[*symbolInstance.placedVerticalIconIndex]);
         }
     }
+
+    featureSortOrder = std::move(symbolsSortOrder);
 }
 
 std::vector<std::reference_wrapper<const SymbolInstance>> SymbolBucket::getSortedSymbols(const float angle) const {
@@ -301,7 +302,11 @@ void SymbolBucket::place(Placement& placement, const BucketPlacementParameters& 
     placement.placeBucket(*this, params, seenIds);
 }
 
-void SymbolBucket::updateVertices(Placement& placement, bool updateOpacities, const TransformState& state, const RenderTile& tile, std::set<uint32_t>& seenIds) {
+void SymbolBucket::updateVertices(const Placement& placement,
+                                  bool updateOpacities,
+                                  const TransformState& state,
+                                  const RenderTile& tile,
+                                  std::set<uint32_t>& seenIds) {
     if (updateOpacities) {
         placement.updateBucketOpacities(*this, state, seenIds);
         placementChangesUploaded = false;

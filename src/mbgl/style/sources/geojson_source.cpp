@@ -1,17 +1,18 @@
+#include <mbgl/storage/file_source.hpp>
+#include <mbgl/style/conversion/geojson.hpp>
+#include <mbgl/style/conversion/json.hpp>
+#include <mbgl/style/layer.hpp>
+#include <mbgl/style/source_observer.hpp>
 #include <mbgl/style/sources/geojson_source.hpp>
 #include <mbgl/style/sources/geojson_source_impl.hpp>
-#include <mbgl/style/source_observer.hpp>
-#include <mbgl/style/conversion/json.hpp>
-#include <mbgl/style/conversion/geojson.hpp>
-#include <mbgl/storage/file_source.hpp>
+#include <mbgl/tile/tile.hpp>
 #include <mbgl/util/logging.hpp>
 
 namespace mbgl {
 namespace style {
 
 GeoJSONSource::GeoJSONSource(const std::string& id, optional<GeoJSONOptions> options)
-    : Source(makeMutable<Impl>(std::move(id), options)) {
-}
+    : Source(makeMutable<Impl>(id, options)) {}
 
 GeoJSONSource::~GeoJSONSource() = default;
 
@@ -20,7 +21,7 @@ const GeoJSONSource::Impl& GeoJSONSource::impl() const {
 }
 
 void GeoJSONSource::setURL(const std::string& url_) {
-    url = std::move(url_);
+    url = url_;
 
     // Signal that the source description needs a reload
     if (loaded || req) {
@@ -76,6 +77,10 @@ void GeoJSONSource::loadDescription(FileSource& fileSource) {
             observer->onSourceLoaded(*this);
         }
     });
+}
+
+bool GeoJSONSource::supportsLayerType(const mbgl::style::LayerTypeInfo* info) const {
+    return mbgl::underlying_type(Tile::Kind::Geometry) == mbgl::underlying_type(info->tileKind);
 }
 
 } // namespace style
