@@ -52,16 +52,19 @@ public:
         }
     }
 
+    mapbox::base::WeakPtr<Scheduler> makeWeakPtr() override { return weakFactory.makeWeakPtr(); }
+
 private:
     std::array<std::thread, N> threads;
+    mapbox::base::WeakPtrFactory<Scheduler> weakFactory{this};
     static_assert(N > 0, "Thread count must be more than zero.");
 };
 
-using SequencedScheduler = ThreadedScheduler<1>;
+class SequencedScheduler : public ThreadedScheduler<1> {};
 
 template <std::size_t extra>
 using ParallelScheduler = ThreadedScheduler<1 + extra>;
 
-using ThreadPool = ParallelScheduler<3>;
+class ThreadPool : public ParallelScheduler<3> {};
 
 } // namespace mbgl

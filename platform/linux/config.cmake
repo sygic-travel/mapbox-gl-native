@@ -52,6 +52,7 @@ macro(mbgl_platform_core)
         PRIVATE platform/default/src/mbgl/layermanager/layer_manager.cpp
         PRIVATE platform/default/src/mbgl/util/compression.cpp
         PRIVATE platform/default/src/mbgl/util/logging_stderr.cpp
+        PRIVATE platform/default/src/mbgl/util/monotonic_timer.cpp
         PRIVATE platform/default/src/mbgl/util/string_stdlib.cpp
         PRIVATE platform/default/src/mbgl/util/thread.cpp
         PRIVATE platform/default/src/mbgl/util/thread_local.cpp
@@ -120,13 +121,6 @@ macro(mbgl_platform_glfw)
     target_link_libraries(mbgl-glfw
         PRIVATE mbgl-filesource
         PRIVATE mbgl-loop-uv
-    )
-
-    add_custom_command(
-        TARGET mbgl-glfw POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-                ${CMAKE_SOURCE_DIR}/misc/ca-bundle.crt
-                ${CMAKE_CURRENT_BINARY_DIR}/ca-bundle.crt
     )
 endmacro()
 

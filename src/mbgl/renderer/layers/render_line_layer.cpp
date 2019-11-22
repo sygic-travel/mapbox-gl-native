@@ -1,20 +1,21 @@
-#include <mbgl/renderer/layers/render_line_layer.hpp>
-#include <mbgl/renderer/buckets/line_bucket.hpp>
-#include <mbgl/renderer/render_tile.hpp>
-#include <mbgl/renderer/render_source.hpp>
-#include <mbgl/renderer/upload_parameters.hpp>
-#include <mbgl/renderer/paint_parameters.hpp>
-#include <mbgl/renderer/image_manager.hpp>
-#include <mbgl/programs/programs.hpp>
-#include <mbgl/programs/line_program.hpp>
-#include <mbgl/geometry/line_atlas.hpp>
-#include <mbgl/tile/tile.hpp>
-#include <mbgl/style/layers/line_layer_impl.hpp>
-#include <mbgl/gfx/cull_face_mode.hpp>
 #include <mbgl/geometry/feature_index.hpp>
-#include <mbgl/util/math.hpp>
-#include <mbgl/util/intersection_tests.hpp>
+#include <mbgl/geometry/line_atlas.hpp>
+#include <mbgl/gfx/cull_face_mode.hpp>
+#include <mbgl/programs/line_program.hpp>
+#include <mbgl/programs/programs.hpp>
+#include <mbgl/renderer/buckets/line_bucket.hpp>
+#include <mbgl/renderer/image_manager.hpp>
+#include <mbgl/renderer/layers/render_line_layer.hpp>
+#include <mbgl/renderer/paint_parameters.hpp>
+#include <mbgl/renderer/render_source.hpp>
+#include <mbgl/renderer/render_tile.hpp>
+#include <mbgl/renderer/upload_parameters.hpp>
+#include <mbgl/style/expression/image.hpp>
+#include <mbgl/style/layers/line_layer_impl.hpp>
 #include <mbgl/tile/geometry_tile.hpp>
+#include <mbgl/tile/tile.hpp>
+#include <mbgl/util/intersection_tests.hpp>
+#include <mbgl/util/math.hpp>
 
 namespace mbgl {
 
@@ -78,8 +79,8 @@ void RenderLineLayer::prepare(const LayerPrepareParameters& params) {
         const LinePatternCap cap = bucket.layout.get<LineCap>() == LineCapType::Round
             ? LinePatternCap::Round : LinePatternCap::Square;
         // Ensures that the dash data gets added to the atlas.
-        params.lineAtlas.getDashPosition(evaluated.get<LineDasharray>().from, cap);
-        params.lineAtlas.getDashPosition(evaluated.get<LineDasharray>().to, cap);
+        params.lineAtlas.getDashPatternTexture(
+            evaluated.get<LineDasharray>().from, evaluated.get<LineDasharray>().to, cap);
     }
 }
 
@@ -146,34 +147,33 @@ void RenderLineLayer::render(PaintParameters& parameters) {
         };
 
         if (!evaluated.get<LineDasharray>().from.empty()) {
-            const LinePatternCap cap = bucket.layout.get<LineCap>() == LineCapType::Round
-                ? LinePatternCap::Round : LinePatternCap::Square;
-            LinePatternPos posA = parameters.lineAtlas.getDashPosition(evaluated.get<LineDasharray>().from, cap);
-            LinePatternPos posB = parameters.lineAtlas.getDashPosition(evaluated.get<LineDasharray>().to, cap);
+            const LinePatternCap cap =
+                bucket.layout.get<LineCap>() == LineCapType::Round ? LinePatternCap::Round : LinePatternCap::Square;
+            const auto& dashPatternTexture = parameters.lineAtlas.getDashPatternTexture(
+                evaluated.get<LineDasharray>().from, evaluated.get<LineDasharray>().to, cap);
 
             draw(parameters.programs.getLineLayerPrograms().lineSDF,
-                 LineSDFProgram::layoutUniformValues(
-                     evaluated,
-                     parameters.pixelRatio,
-                     tile,
-                     parameters.state,
-                     parameters.pixelsToGLUnits,
-                     posA,
-                     posB,
-                     crossfade,
-                     parameters.lineAtlas.getSize().width),
-                     {},
-                     {},
-                     LineSDFProgram::TextureBindings{
-                         parameters.lineAtlas.textureBinding(),
-                     });
+                 LineSDFProgram::layoutUniformValues(evaluated,
+                                                     parameters.pixelRatio,
+                                                     tile,
+                                                     parameters.state,
+                                                     parameters.pixelsToGLUnits,
+                                                     dashPatternTexture.getFrom(),
+                                                     dashPatternTexture.getTo(),
+                                                     crossfade,
+                                                     dashPatternTexture.getSize().width),
+                 {},
+                 {},
+                 LineSDFProgram::TextureBindings{
+                     dashPatternTexture.textureBinding(),
+                 });
 
         } else if (!unevaluated.get<LinePattern>().isUndefined()) {
-            const auto& linePatternValue = evaluated.get<LinePattern>().constantOr(Faded<std::basic_string<char>>{ "", ""});
+            const auto& linePatternValue = evaluated.get<LinePattern>().constantOr(Faded<expression::Image>{"", ""});
             const Size& texsize = tile.getIconAtlasTexture().size;
 
-            optional<ImagePosition> posA = tile.getPattern(linePatternValue.from);
-            optional<ImagePosition> posB = tile.getPattern(linePatternValue.to);
+            optional<ImagePosition> posA = tile.getPattern(linePatternValue.from.id());
+            optional<ImagePosition> posB = tile.getPattern(linePatternValue.to.id());
 
             draw(parameters.programs.getLineLayerPrograms().linePattern,
                  LinePatternProgram::layoutUniformValues(

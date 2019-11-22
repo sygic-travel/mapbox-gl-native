@@ -3,12 +3,27 @@
 Mapbox welcomes participation and contributions from everyone. Please read [CONTRIBUTING.md](../../CONTRIBUTING.md) to get started.
 
 ## master
+* Added support for [image expression](https://docs.mapbox.com/mapbox-gl-js/style-spec/#expressions-types-image) in core library. Runtime APIs for image expression will be implemented separately. ([#15877](https://github.com/mapbox/mapbox-gl-native/pull/15877))
+* Make network requests for expired resources lower priority than requests for new resources. ([#15950](https://github.com/mapbox/mapbox-gl-native/pull/15950))
+
+### Other changes
+* Convert GeoJSON features to tiles for the loaded source description in a background thread and thus unblock the UI thread ([#15885](https://github.com/mapbox/mapbox-gl-native/pull/15885))
+
+### Bug fixes
+* Fixed the rendering bug caused by redundant pending requests for already requested images [#15864](https://github.com/mapbox/mapbox-gl-native/pull/15864)
+* Enable incremental vacuum for the offline database in order to make data removal requests faster and to avoid the excessive disk space usage (creating a backup file on VACUUM call). ([#15837](https://github.com/mapbox/mapbox-gl-native/pull/15837))
+* Fixed Geo JSON source flickering on style transition. ([#15907](https://github.com/mapbox/mapbox-gl-native/pull/15907))
+* Fixed flickering caused by unnecessary removing and re-adding of the render sources when the order of their corresponding style objects was changed in the updated style ([#15941](https://github.com/mapbox/mapbox-gl-native/pull/15941))
+
+## 5.5.0
 
 ### Performance improvements
 
- * Improved rendering performance for the styles with multiple sources ([#15756](https://github.com/mapbox/mapbox-gl-native/pull/15756))
+* Improved rendering performance for the styles with multiple sources ([#15756](https://github.com/mapbox/mapbox-gl-native/pull/15756))
 
-## 5.5.0
+### Styles and rendering
+
+* Added an `MGLShapeSourceOptionClusterProperties` option that allows styling individual clusters based on aggregated feature data. ([#15515](https://github.com/mapbox/mapbox-gl-native/pull/15515))
 
 ### Other changes
 
@@ -18,6 +33,7 @@ Mapbox welcomes participation and contributions from everyone. Please read [CONT
 * Fixed an issue that cause `-[MGLMapView setCamere:withDuration:animationTimingFunction:edgePadding:completionHandler:]` persist the value of `edgePadding`. ([#15584](https://github.com/mapbox/mapbox-gl-native/pull/15584))
 * Added `MGLMapView.automaticallyAdjustsContentInset` property that indicates if wether the map view should automatically adjust its content insets. ([#15584](https://github.com/mapbox/mapbox-gl-native/pull/15584))
 * Fixed an issue that caused `MGLScaleBar` to have an incorrect size when resizing or rotating. ([#15703](https://github.com/mapbox/mapbox-gl-native/pull/15703))
+* Fixed crash at launch seen on iOS 9 simulator. ([#15771](https://github.com/mapbox/mapbox-gl-native/pull/15771))
 
 ## 5.4.0 - September 25, 2019
 

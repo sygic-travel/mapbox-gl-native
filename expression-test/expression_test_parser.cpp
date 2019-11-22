@@ -118,6 +118,8 @@ style::expression::type::Type stringToType(const std::string& type) {
         return type::Value;
     } else if (type == "formatted"s) {
         return type::Formatted;
+    } else if (type == "resolvedImage"s) {
+        return type::Image;
     }
 
     // Should not reach.
@@ -252,6 +254,16 @@ bool parseInputs(const JSValue& inputsValue, TestData& data) {
             heatmapDensity = evaluationContext["heatmapDensity"].GetDouble();
         }
 
+        // Parse availableImages
+        std::set<std::string> availableImages;
+        if (evaluationContext.HasMember("availableImages")) {
+            assert(evaluationContext["availableImages"].IsArray());
+            for (const auto& image : evaluationContext["availableImages"].GetArray()) {
+                assert(image.IsString());
+                availableImages.emplace(toString(image));
+            }
+        }
+
         // Parse feature properties
         Feature feature(mapbox::geometry::point<double>(0.0, 0.0));
         const auto& featureObject = input[1].GetObject();
@@ -270,7 +282,8 @@ bool parseInputs(const JSValue& inputsValue, TestData& data) {
             feature.id = mapbox::geojson::convert<mapbox::feature::identifier>(featureObject["id"]);
         }
 
-        data.inputs.emplace_back(std::move(zoom), std::move(heatmapDensity), std::move(feature));
+        data.inputs.emplace_back(
+            std::move(zoom), std::move(heatmapDensity), std::move(availableImages), std::move(feature));
     }
     return true;
 }

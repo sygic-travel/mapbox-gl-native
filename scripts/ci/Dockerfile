@@ -9,7 +9,7 @@ WORKDIR /src
 COPY etc/apt/sources.list /etc/apt
 
 RUN set -eu \
-    && apt-get update\
+    && apt-get update \
     && apt-get dist-upgrade -y
 
 # CI requirements
@@ -38,9 +38,10 @@ RUN set -eu && apt-get install -y \
     pkg-config \
     python3-pip \
     software-properties-common \
+    valgrind \
     xvfb
 
-RUN pip3 install cmake_format
+RUN pip3 install cmake-format==0.5.5
 
 # Linux dependencies
 RUN set -eu && apt-get install -y \
@@ -102,6 +103,12 @@ RUN set -eu \
         "extras;google;m2repository" \
         "extras;m2repository;com;android;support;constraint;constraint-layout;1.0.2" \
         "cmake;3.10.2.4988404"
+
+# Install gcloud for Firebase testing
+RUN set -eu \
+    && echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] http://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list \
+    && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | apt-key --keyring /usr/share/keyrings/cloud.google.gpg add - \
+    && apt-get update -y && apt-get install google-cloud-sdk -y
 
 # Configure ccache
 RUN set -eu && /usr/sbin/update-ccache-symlinks
