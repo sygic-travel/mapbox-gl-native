@@ -14,7 +14,8 @@ struct TestMetadata;
 
 class TestRunner {
 public:
-    explicit TestRunner(Manifest);
+    enum class UpdateResults { NO, DEFAULT, PLATFORM, METRICS };
+    TestRunner(Manifest, UpdateResults);
     bool run(TestMetadata&);
     void reset();
 
@@ -24,10 +25,14 @@ public:
 
 private:
     bool runOperations(const std::string& key, TestMetadata&, RunContext&);
+    bool runInjectedProbesBegin(TestMetadata&, RunContext&);
+    bool runInjectedProbesEnd(TestMetadata&, RunContext&, mbgl::gfx::RenderingStats);
+
     bool checkQueryTestResults(mbgl::PremultipliedImage&& actualImage,
                                std::vector<mbgl::Feature>&& features,
                                TestMetadata&);
     bool checkRenderTestResults(mbgl::PremultipliedImage&& image, TestMetadata&);
+    bool checkProbingResults(TestMetadata&);
 
     struct Impl {
         Impl(const TestMetadata&);
@@ -39,4 +44,5 @@ private:
     };
     std::unordered_map<std::string, std::unique_ptr<Impl>> maps;
     Manifest manifest;
+    UpdateResults updateResults;
 };

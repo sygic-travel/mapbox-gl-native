@@ -44,6 +44,10 @@ const std::string& Manifest::getResultPath() const {
     return resultPath;
 }
 
+const std::set<std::string>& Manifest::getProbes() const {
+    return probes;
+}
+
 void Manifest::doShuffle(uint32_t seed) {
     std::seed_seq sequence{seed};
     std::mt19937 shuffler(sequence);
@@ -223,18 +227,16 @@ std::vector<std::pair<std::string, std::string>> parseIgnores(const std::vector<
     return ignores;
 }
 
-std::vector<mbgl::filesystem::path> getTestExpectations(mbgl::filesystem::path testPath,
-                                                        const mbgl::filesystem::path& testsRootPath,
-                                                        std::vector<mbgl::filesystem::path> expectationsPaths) {
-    std::vector<mbgl::filesystem::path> expectations{std::move(testPath.remove_filename())};
-    const auto& defaultTestExpectationsPath = expectations.front().string();
-
-    const std::regex regex{testsRootPath.string()};
-    for (const auto& path : expectationsPaths) {
-        expectations.emplace_back(std::regex_replace(defaultTestExpectationsPath, regex, path.string()));
-        assert(!expectations.back().empty());
+// defaultExpectationPath: absolute path that constains the style.json file for testing
+// testId: Test case id that used for composing expectation path
+// expectatedPaths: absolute paths that constain possible expected.png/metrics.json files for result checking
+std::vector<mbgl::filesystem::path> getTestExpectations(const mbgl::filesystem::path& defaultExpectationPath,
+                                                        const std::string& testId,
+                                                        std::vector<mbgl::filesystem::path> expectatedPaths) {
+    std::vector<mbgl::filesystem::path> expectations{defaultExpectationPath};
+    for (const auto& expectedPath : expectatedPaths) {
+        expectations.emplace_back(expectedPath / testId);
     }
-
     return expectations;
 }
 
@@ -255,7 +257,7 @@ mbgl::filesystem::path getValidPath(const std::string& manifestPath, const std::
 
 mbgl::optional<Manifest> ManifestParser::parseManifest(const std::string& manifestPath,
                                                        const std::vector<std::string>& testNames,
-                                                       const std::string& testFilter) {
+                                                       std::string testFilter) {
     Manifest manifest;
     const auto filePath = mbgl::filesystem::path(manifestPath);
     manifest.manifestPath = manifestPath.substr(0, manifestPath.find(filePath.filename()));
@@ -331,6 +333,20 @@ mbgl::optional<Manifest> ManifestParser::parseManifest(const std::string& manife
         }
         enbaleProbeTest = true;
     }
+    mbgl::filesystem::path expectedMetricPath;
+    if (document.HasMember("metric_path")) {
+        const auto& metricPathValue = document["metric_path"];
+        if (!metricPathValue.IsString()) {
+            mbgl::Log::Warning(mbgl::Event::General,
+                               "Invalid metric_path is provoided inside the manifest file: %s",
+                               filePath.c_str());
+            return mbgl::nullopt;
+        }
+        expectedMetricPath = getValidPath(manifest.manifestPath, metricPathValue.GetString());
+        if (expectedMetricPath.empty()) {
+            return mbgl::nullopt;
+        }
+    }
     std::vector<mbgl::filesystem::path> expectationPaths{};
     if (document.HasMember("expectation_paths")) {
         const auto& expectationPathValue = document["expectation_paths"];
@@ -377,6 +393,36 @@ mbgl::optional<Manifest> ManifestParser::parseManifest(const std::string& manife
         manifest.ignores = parseIgnores(ignorePaths);
     }
 
+    if (document.HasMember("probes")) {
+        const auto& probesValue = document["probes"];
+        if (!probesValue.IsArray()) {
+            mbgl::Log::Warning(mbgl::Event::General,
+                               "Provided probes inside the manifest file: %s is not a valid array",
+                               filePath.c_str());
+            return mbgl::nullopt;
+        }
+        for (const auto& value : probesValue.GetArray()) {
+            if (!value.IsString()) {
+                mbgl::Log::Warning(mbgl::Event::General,
+                                   "Invalid probe type is provoided inside the manifest file: %s",
+                                   filePath.c_str());
+                return mbgl::nullopt;
+            }
+            manifest.probes.emplace(value.GetString());
+        }
+    }
+
+    if (testFilter.empty() && document.HasMember("filter")) {
+        const auto& filterValue = document["filter"];
+        if (!filterValue.IsString()) {
+            mbgl::Log::Warning(
+                mbgl::Event::General, "Invalid filter is provoided inside the manifest file: %s", filePath.c_str());
+            return mbgl::nullopt;
+        }
+
+        testFilter = filterValue.GetString();
+    }
+
     manifest.testRootPath = enbaleProbeTest ? probeTestPath.string() : baseTestPath.string();
     if (manifest.testRootPath.back() == '/') {
         manifest.testRootPath.pop_back();
@@ -414,7 +460,14 @@ mbgl::optional<Manifest> ManifestParser::parseManifest(const std::string& manife
             }
 
             if (testPath.path().filename() == "style.json") {
-                testPaths.emplace_back(testPath, getTestExpectations(testPath, path, expectationPaths));
+                const auto defaultExpectationPath{std::move(mbgl::filesystem::path(testPath).remove_filename())};
+                const auto rootLength = manifest.testRootPath.length();
+                auto testId = defaultExpectationPath.string();
+                testId = testId.substr(rootLength + 1, testId.length() - rootLength - 1);
+
+                testPaths.emplace_back(testPath,
+                                       getTestExpectations(defaultExpectationPath, testId, expectationPaths),
+                                       getTestExpectations(defaultExpectationPath, testId, {expectedMetricPath}));
             }
         }
     }

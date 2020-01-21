@@ -43,7 +43,9 @@ add_compile_options(
     $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<PLATFORM_ID:Windows>>>:-Wall>
     $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<PLATFORM_ID:Windows>>>:-Wextra>
     $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<NOT:$<PLATFORM_ID:Windows>>>:-Werror>
+    $<$<AND:$<COMPILE_LANGUAGE:CXX>,$<PLATFORM_ID:Android>>:-Wno-error=tautological-constant-compare>
     $<$<CXX_COMPILER_ID:GNU>:-Wno-error=maybe-uninitialized>
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-error=return-type>
     $<$<CXX_COMPILER_ID:GNU>:-Wno-error=unknown-pragmas>
     $<$<CXX_COMPILER_ID:AppleClang>:-Wno-error=deprecated-declarations>
     $<$<CXX_COMPILER_ID:AppleClang>:-Wno-error=unused-parameter>
@@ -439,6 +441,7 @@ add_library(
     ${MBGL_ROOT}/src/mbgl/programs/gl/symbol_icon.cpp
     ${MBGL_ROOT}/src/mbgl/programs/gl/symbol_sdf_icon.cpp
     ${MBGL_ROOT}/src/mbgl/programs/gl/symbol_sdf_text.cpp
+    ${MBGL_ROOT}/src/mbgl/programs/gl/symbol_text_and_icon.cpp
     ${MBGL_ROOT}/src/mbgl/programs/heatmap_program.cpp
     ${MBGL_ROOT}/src/mbgl/programs/heatmap_program.hpp
     ${MBGL_ROOT}/src/mbgl/programs/heatmap_texture_program.cpp
@@ -465,6 +468,7 @@ add_library(
     ${MBGL_ROOT}/src/mbgl/programs/symbol_program.hpp
     ${MBGL_ROOT}/src/mbgl/programs/symbol_sdf_icon_program.hpp
     ${MBGL_ROOT}/src/mbgl/programs/symbol_sdf_text_program.hpp
+    ${MBGL_ROOT}/src/mbgl/programs/symbol_text_and_icon_program.hpp
     ${MBGL_ROOT}/src/mbgl/programs/textures.hpp
     ${MBGL_ROOT}/src/mbgl/programs/uniforms.hpp
     ${MBGL_ROOT}/src/mbgl/renderer/backend_scope.cpp
@@ -948,6 +952,10 @@ set_property(TARGET mbgl-core PROPERTY FOLDER Core)
 add_library(
     Mapbox::Map ALIAS mbgl-core
 )
+
+if(MBGL_WITH_PLATFORM_EXTRAS)
+    include(${MBGL_WITH_PLATFORM_EXTRAS})
+endif()
 
 if(MBGL_WITH_CORE_ONLY)
     return()
