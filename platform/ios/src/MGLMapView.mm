@@ -1454,7 +1454,8 @@ public:
         return;
     }
     
-    self.lastSnapshotImage = _mbglView->snapshot();
+    // Disabled snapshotting due to background crashing
+//    self.lastSnapshotImage = _mbglView->snapshot();
     
     // For OpenGL this calls glFinish as recommended in
     // https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/ImplementingaMultitasking-awareOpenGLESApplication/ImplementingaMultitasking-awareOpenGLESApplication.html#//apple_ref/doc/uid/TP40008793-CH5-SW1
